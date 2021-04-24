@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./node_modules/socket.io/client-dist/socket.io.js"></script>
+    <title>Socket.io Test</title>
+</head>
+
+<body id="body">
+    <button id="stop">STOP MATCH</button>
+    <button id="start">START MATCH</button>
+    <script>
+        const socket = io("http://localhost:3000");
+
+        socket.on('next-ball', (data) => {
+            let msg = data.batsman + " to " + data.bowler + ". (" + data.runs.batsman + ")";
+            let elem = document.createElement('h3')
+            elem.innerHTML = msg
+            document.getElementById('body').appendChild(elem)
+        })
+
+        document.getElementById('stop').onclick = function () {
+            socket.emit('stop-match')
+        }
+
+        document.getElementById('start').onclick = function () {
+            socket.emit('start-match')
+        }
+
+    </script>
+
+</body>
+
+</html>

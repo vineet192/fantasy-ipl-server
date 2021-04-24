@@ -1,0 +1,15 @@
+{
+  "name": "dream-ipl",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Vineet Kalghatgi",
+  "license": "ISC",
+  "dependencies": {
+    "socket.io": "^4.0.1"
+  }
+}
