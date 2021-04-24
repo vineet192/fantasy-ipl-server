@@ -2,7 +2,7 @@ const socketIO = require('socket.io');
 const express = require('express');
 const PORT = process.env.PORT || 3000;
 const INDEX = '/index.html';
-var clients = 0
+var clients = 0;
 
 var fs = require('fs');
 
@@ -17,7 +17,7 @@ const io = socketIO(server, {
 });
 
 io.on('connection', (client) => {
-  clients += 1
+  clients += 1;
   console.log('New client connected, Number of clients is ', clients);
   var matchInterval;
   var match;
@@ -32,7 +32,7 @@ io.on('connection', (client) => {
     let matchData = fs.readFileSync('./matches/' + matchJson);
     match = JSON.parse(matchData);
 
-    console.log('Found match', match)
+    console.log('Found match', match);
 
     client.emit('match-info', match.info);
     let selectablePlayers = findValues(match, 'batsman').concat(
@@ -77,11 +77,13 @@ io.on('connection', (client) => {
   });
 
   client.on('disconnect', (client) => {
-    if(clients !=0){
-      clients -= 1
+    if (clients != 0) {
+      clients -= 1;
     }
-    console.log('Client disconnected, Number of clients is', clients)
-  })
+    console.log('Client disconnected, Number of clients is', clients);
+    console.log('Stopping match');
+    clearInterval(matchInterval);
+  });
 });
 
 //Helper function to find values by key recursively.
