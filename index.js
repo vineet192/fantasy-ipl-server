@@ -16,6 +16,7 @@ const io = socketIO(server, {
 });
 
 io.on('connection', (client) => {
+  console.log('New client connected', client);
   var matchInterval;
   var match;
   var playerJson = JSON.parse(fs.readFileSync('./players.json'));
@@ -29,6 +30,8 @@ io.on('connection', (client) => {
     let matchData = fs.readFileSync('./matches/' + matchJson);
     match = JSON.parse(matchData);
 
+    console.log('Found match', match)
+
     client.emit('match-info', match.info);
     let selectablePlayers = findValues(match, 'batsman').concat(
       findValues(match, 'bowler')
@@ -39,6 +42,10 @@ io.on('connection', (client) => {
 
   //Start the selected match
   client.on('start-match', () => {
+    if (match == undefined) {
+      console.log('Match was undefined, try selecting again ');
+      return;
+    }
     let deliveries = match.innings[0]['1st innings'].deliveries;
     deliveries.concat(match.innings[1]['2nd innings'].deliveries);
 
@@ -66,6 +73,10 @@ io.on('connection', (client) => {
     console.log('Stopping match');
     clearInterval(matchInterval);
   });
+
+  client.on('disconnect', (client) => {
+    console.log('Client disconnected')
+  })
 });
 
 //Helper function to find values by key recursively.
