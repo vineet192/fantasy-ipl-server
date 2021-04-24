@@ -16,7 +16,7 @@ const io = socketIO(server, {
 });
 
 io.on('connection', (client) => {
-  console.log('New client connected', client);
+  console.log('New client connected');
   var matchInterval;
   var match;
   var playerJson = JSON.parse(fs.readFileSync('./players.json'));
