@@ -2,6 +2,7 @@ const socketIO = require('socket.io');
 const express = require('express');
 const PORT = process.env.PORT || 3000;
 const INDEX = '/index.html';
+var clients = 0
 
 var fs = require('fs');
 
@@ -16,7 +17,8 @@ const io = socketIO(server, {
 });
 
 io.on('connection', (client) => {
-  console.log('New client connected');
+  clients += 1
+  console.log('New client connected, Number of clients is ', clients);
   var matchInterval;
   var match;
   var playerJson = JSON.parse(fs.readFileSync('./players.json'));
@@ -75,7 +77,10 @@ io.on('connection', (client) => {
   });
 
   client.on('disconnect', (client) => {
-    console.log('Client disconnected')
+    if(clients !=0){
+      clients -= 1
+    }
+    console.log('Client disconnected, Number of clients is', clients)
   })
 });
 
