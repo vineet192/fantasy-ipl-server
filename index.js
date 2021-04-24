@@ -17,20 +17,28 @@ const io = socketIO(server, {
 
 io.on('connection', (client) => {
   var matchInterval;
+  var match;
+  var playerJson = JSON.parse(fs.readFileSync('./players.json'));
+  var match_idx = 0;
 
-  //Start a random match
-  client.on('start-match', () => {
+  //Select a random match
+  client.on('select-match', () => {
     console.log('starting random match');
     var files = fs.readdirSync('./matches');
     let matchJson = files[Math.floor(Math.random() * files.length)];
     let matchData = fs.readFileSync('./matches/' + matchJson);
-    let match = JSON.parse(matchData);
-    var match_idx = 0;
+    match = JSON.parse(matchData);
 
     client.emit('match-info', match.info);
-    let firstTeam = match.innings[0]['1st innings'].team;
-    let secondTeam = match.innings[1]['2nd innings'].team;
+    let selectablePlayers = findValues(match, 'batsman').concat(
+      findValues(match, 'bowler')
+    );
+    selectablePlayers = makeArrayUnique(selectablePlayers);
+    client.emit('player-list', selectablePlayers);
+  });
 
+  //Start the selected match
+  client.on('start-match', () => {
     let deliveries = match.innings[0]['1st innings'].deliveries;
     deliveries.concat(match.innings[1]['2nd innings'].deliveries);
 
@@ -59,3 +67,42 @@ io.on('connection', (client) => {
     clearInterval(matchInterval);
   });
 });
+
+//Helper function to find values by key recursively.
+function findValues(obj, key) {
+  return findValuesHelper(obj, key, []);
+}
+
+function findValuesHelper(obj, key, list) {
+  if (!obj) return list;
+  if (obj instanceof Array) {
+    for (var i in obj) {
+      list = list.concat(findValuesHelper(obj[i], key, []));
+    }
+    return list;
+  }
+  if (obj[key] && !Number.isInteger(obj[key])) list.push(obj[key]);
+
+  if (typeof obj == 'object' && obj !== null) {
+    var children = Object.keys(obj);
+    if (children.length > 0) {
+      for (i = 0; i < children.length; i++) {
+        list = list.concat(findValuesHelper(obj[children[i]], key, []));
+      }
+    }
+  }
+  return list;
+}
+
+//Helper function to make an array unique
+function makeArrayUnique(arr) {
+  var u = {},
+    a = [];
+  for (var i = 0, l = arr.length; i < l; ++i) {
+    if (!u.hasOwnProperty(arr[i])) {
+      a.push(arr[i]);
+      u[arr[i]] = 1;
+    }
+  }
+  return a;
+}
