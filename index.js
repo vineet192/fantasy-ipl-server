@@ -1,9 +1,19 @@
-const io = require('socket.io')({
+const socketIO = require('socket.io');
+const express = require('express');
+const PORT = process.env.PORT || 3000;
+const INDEX = '/index.html';
+
+var fs = require('fs');
+
+const server = express()
+  .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+const io = socketIO(server, {
   cors: {
     origin: '*',
   },
 });
-var fs = require('fs');
 
 io.on('connection', (client) => {
   var matchInterval;
@@ -49,6 +59,3 @@ io.on('connection', (client) => {
     clearInterval(matchInterval);
   });
 });
-
-console.log('running on ' + io.path());
-io.listen(3000);
