@@ -16,16 +16,18 @@ const io = socketIO(server, {
   },
 });
 
+var playerJson = JSON.parse(fs.readFileSync('./players.json'));
+
 io.on('connection', (client) => {
   clients += 1;
   console.log('New client connected, Number of clients is ', clients);
   var matchInterval;
   var match;
-  var playerJson = JSON.parse(fs.readFileSync('./players.json'));
   var match_idx = 0;
 
   //Select a random match
   client.on('select-match', () => {
+    clearInterval(matchInterval)
     console.log('starting random match');
     var files = fs.readdirSync('./matches');
     let matchJson = files[Math.floor(Math.random() * files.length)];
@@ -39,7 +41,11 @@ io.on('connection', (client) => {
       findValues(match, 'bowler')
     );
     selectablePlayers = makeArrayUnique(selectablePlayers);
-    client.emit('player-list', selectablePlayers);
+    playersWithScore = {};
+    selectablePlayers.forEach((player) => {
+      playersWithScore[player] = playerJson.players[player];
+    });
+    client.emit('player-list', { selectablePlayers, playersWithScore });
   });
 
   //Start the selected match

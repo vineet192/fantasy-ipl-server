@@ -14,8 +14,8 @@
     <button id="start">START MATCH</button>
     <button id = "select">SELECT MATCH</button>
     <script>
-        const socket = io("https://fantasy-ipl-server.herokuapp.com/");
-        //const socket = io("http://localhost:3000");
+        //const socket = io("https://fantasy-ipl-server.herokuapp.com/");
+        const socket = io("http://localhost:3000");
 
         socket.on('next-ball', (data) => {
             let msg = data.batsman + " to " + data.bowler + ". (" + data.runs.batsman + ")";
@@ -24,11 +24,12 @@
             document.getElementById('body').appendChild(elem)
         })
 
-        socket.on('player-list', (players) => {
-            let msg = players.toString()
-            let elem = document.createElement('h4')
-            elem.innerHTML = msg
-            document.getElementById('body').appendChild(elem)
+        socket.on('player-list', (data) => {
+            // let msg = players.toString() + "\n" + credits.toString();
+            // let elem = document.createElement('h4')
+            // elem.innerHTML = msg
+            // document.getElementById('body').appendChild(elem)
+            console.log(data)
         })
 
         document.getElementById('stop').onclick = function () {
