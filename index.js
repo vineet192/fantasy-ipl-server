@@ -55,7 +55,7 @@ io.on('connection', (client) => {
       return;
     }
     let deliveries = match.innings[0]['1st innings'].deliveries;
-    deliveries.concat(match.innings[1]['2nd innings'].deliveries);
+    deliveries = deliveries.concat(match.innings[1]['2nd innings'].deliveries);
 
     matchInterval = setInterval(() => {
       if (match_idx == deliveries.length) {
