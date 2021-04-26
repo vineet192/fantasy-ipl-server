@@ -1,6 +1,6 @@
 # Fantasy IPL Server
 
-A Node.js server that uses socket.io to push dummy match JSON data in real time.
+A Node.js server that uses socket.io to push dummy match JSON data in real time. The server is hosted on heroku at https://fantasy-ipl-server.herokuapp.com/
 
 ---
 ## Requirements
